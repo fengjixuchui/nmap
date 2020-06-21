@@ -1,5 +1,9 @@
 #Nmap Changelog ($Id$); -*-text-*-
 
+o [GH#2068] Fix reverse-DNS handling of PTR records that are not lowercase.
+  Nmap was failing to identify reverse-DNS names when the DNS server delivered
+  them like ".IN-ADDR.ARPA". [Lucas Nussbaum, Daniel Miller]
+
 o [NSE][GH#1999][GH#2005] IKE library was not properly populating the protocol
   number in aggressive mode requests. [luc-x41]
 
@@ -188,6 +192,10 @@ o [GH#1396] Fixed the Windows installer, which would replace the entire PATH
   system variable with the path for Nmap if it exceeded 1024 bytes. This was
   fixed by using the "large strings" build of NSIS to build the new installer.
   [Daniel Miller]
+
+o Replaced the addrset matching code that is used by --exclude and
+  --excludefile with a much faster implementation using a radix tree (trie).
+  https://seclists.org/nmap-dev/2018/q4/13
 
 o [GH#1291][GH#34][GH#1339] Use pcap_create instead of pcap_live_open in
   Nmap, and set immediate mode on the pcap descriptor. This solves packet
