@@ -1,7 +1,22 @@
 #Nmap Changelog ($Id$); -*-text-*-
 
+o [NSE][GH#2091] Parsing of AFP FPGetFileDirParms and
+  FPEnumerateExt2FPEnumerateExt2 responses was not working correctly [nnposter]
+
+o [NSE][GH#2089] Eliminated false positives in script http-shellshock caused by
+  simple reflection of HTTP request data [Anders Kaseorg]
+
+o [NSE][GH#1473] SNMP scripts are now enabled on non-standard ports where SNMP
+  has been detected [usd-markus, nnposter]
+
 o [NSE][GH#2084] MQTT library was using incorrect position when parsing
   received responses [tatulea]
+
+o [NSE][GH#2086] IPMI library was using incorrect position when parsing
+  received responses [Star Salzman]
+
+o [NSE][GH#2086] Scripts ipmi-brute and deluge-rpc-brute were not capturing
+  successfully brute-forced credentials [Star Salzman]
 
 o Allow resuming IPv6 scans with --resume. The address parsing was assuming IPv4
   addresses, leading to "Unable to parse ip" error. In a related fix, MAC addresses
@@ -63,6 +78,13 @@ o [Windows] Add support for the new loopback behavior in Npcap 0.9983. This
   enables Nmap to scan localhost on Windows without needing the Npcap Loopback
   Adapter to be installed, which was a source of problems for some users.
   [Daniel Miller]
+
+o [NSE] MS SQL library has improved version resolution, from service pack level
+  to individual cumulative updates [nnposter]
+
+o [NSE][GH#2077] With increased verbosity, script http-default-accounts now
+  reports matched target fingerprints even if no default credentials were found
+  [nnposter]
 
 o [NSE][GH#2063] IPP request object conversion to string was not working
   correctly [nnposter]
