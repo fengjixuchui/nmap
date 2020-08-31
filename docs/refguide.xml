@@ -388,7 +388,7 @@ you would expect.</para>
     ping types) can be combined.  You can increase your odds of
     penetrating strict firewalls by sending many probe types using
     different TCP ports/flags and ICMP codes.  Also note that
-    ARP/Neighbor Discovery <indexterm><primary>ARP ping</primary></indexterm>
+    ARP/Neighbor Discovery<indexterm><primary>ARP ping</primary></indexterm>
     is done by default against
     targets on a local Ethernet network even if you specify other
     <option>-P*</option> options, because it is almost always faster
@@ -2285,7 +2285,7 @@ way.</para>
 
       <varlistentry>
         <term>
-          <option>--script <replaceable>filename</replaceable>|<replaceable>category</replaceable>|<replaceable>directory</replaceable>|<replaceable>expression</replaceable><optional>,...</optional></option>
+          <option>--script <replaceable>filename</replaceable>|<replaceable>category</replaceable>|<replaceable>directory</replaceable>/|<replaceable>expression</replaceable><optional>,...</optional></option>
           <indexterm><primary><option>--script</option></primary></indexterm>
         </term>
 
@@ -2318,18 +2318,18 @@ found:
 <member><option>--datadir</option></member>
 <member><envar>$NMAPDIR</envar><indexterm><primary><envar>NMAPDIR</envar> environment variable</primary></indexterm></member>
 <member><filename>~/.nmap</filename> (not searched on Windows)<indexterm><primary sortas="nmap directory"><filename>.nmap</filename> directory</primary></indexterm></member>
-<member><filename><replaceable>HOME</replaceable>\AppData\Roaming\nmap</filename> (only on Windows)<indexterm><primary sortas="nmap directory"><filename>.nmap</filename> directory</primary></indexterm></member>
+<member><filename><replaceable>APPDATA</replaceable>\nmap</filename> (only on Windows)<indexterm><primary sortas="nmap directory"><filename>.nmap</filename> directory</primary></indexterm></member>
 <member>the directory containing the <filename>nmap</filename>
 executable</member>
 <member>the directory containing the <filename>nmap</filename>
-executable, followed by <filename>../share/nmap</filename></member>
-<member><varname>NMAPDATADIR</varname><indexterm><primary><varname>NMAPDATADIR</varname></primary></indexterm></member>
+executable, followed by <filename>../share/nmap</filename> (not searched on Windows)</member>
+<member><varname>NMAPDATADIR</varname><indexterm><primary><varname>NMAPDATADIR</varname></primary></indexterm> (not searched on Windows)</member>
 <member>the current directory.</member>
 </simplelist>
 </para>
 
 <para>
-When a directory name is given, Nmap loads every file in the directory
+When a directory name ending in <literal>/</literal> is given, Nmap loads every file in the directory
 whose name ends with <filename>.nse</filename>. All other files are
 ignored and directories are not searched recursively. When a filename is
 given, it does not have to have the <filename>.nse</filename> extension;

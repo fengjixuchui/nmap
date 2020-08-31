@@ -1,5 +1,18 @@
 #Nmap Changelog ($Id$); -*-text-*-
 
+o [Ncat][GH#2087][GH#1927][GH#1928][GH#1974] It is now possible to override
+  the value of TLS SNI via --ssl-servername [Hank Leininger, nnposter]
+
+o [GH#2104] Fixed parsing of TCP options which would hang (infinite loop) if an
+  option had an explicit length of 0. Affects Nmap 7.80 only.
+  [Daniel Miller, Imed Mnif]
+
+o [NSE][GH#2105] Fetching of SSH2 keys might fail because of key exchange
+  confusion [nnposter]
+
+o [NSE][GH#2098] Performance of script afp-ls has been dramatically improved
+  [nnposter]
+
 o [NSE][GH#2091] Parsing of AFP FPGetFileDirParms and
   FPEnumerateExt2FPEnumerateExt2 responses was not working correctly [nnposter]
 
@@ -141,8 +154,8 @@ o [NSE][GH#1720] Functions lsa_lookupnames2 and lsa_lookupsids2 in library
   msrpc were incorrectly referencing function strjoin when called with debug
   level 2 or higher. [Ivan Ivanov]
 
-o [NSE][GH#1755] Added a default account fingerprint for Tomcat Host Manager.
-  [Clément Notin]
+o [NSE][GH#1755][GH#2096] Added HTTP default account fingerprints for Tomcat
+  Host Manager and Dell iDRAC9. [Clément Notin]
 
 o [NSE][GH#1476][GH#1707] A MS-SMB spec non-compliance in Samba was causing
   protocol negotiation to fail with data string too short error.

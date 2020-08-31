@@ -2556,21 +2556,19 @@ static int nmap_fetchfile_sub(char *filename_returned, int bufferlen, const char
    individual data files. If any of these were used those locations are checked
    first, and no other locations are checked.
 
-   After that, the following directories are searched in order. First an
-   NMAP_UPDATE_CHANNEL subdirectory is checked in all of them, then they are all
-   tried again directly.
+   After that, the following directories are searched in order:
     * --datadir
-    * $NMAPDIR
-    * [Non-Windows only] ~/.nmap
-    * [Windows only] ...\Users\<user>\AppData\Roaming\nmap
+    * $NMAPDIR environment variable
+    * User's home Nmap directory:
+      - [Windows] %APPDATA%\nmap
+      - [Non-Windows] ~/.nmap
     * The directory containing the nmap binary
-    * [Non-Windows only] The directory containing the nmap binary plus
-      "/../share/nmap"
-    * NMAPDATADIR */
+    * [Non-Windows only]:
+      - The directory containing the nmap binary plus "../share/nmap"
+      - NMAPDATADIR (usually $prefix/share/nmap)
+    */
 int nmap_fetchfile(char *filename_returned, int bufferlen, const char *file) {
-  const char *UPDATES_PREFIX = "updates/" NMAP_UPDATE_CHANNEL "/";
   std::map<std::string, std::string>::iterator iter;
-  char buf[BUFSIZ];
   int res;
 
   /* Check the map of requested data file names. */
@@ -2585,13 +2583,7 @@ int nmap_fetchfile(char *filename_returned, int bufferlen, const char *file) {
     return res != 0 ? res : 1;
   }
 
-  /* Try updates directory first. */
-  Strncpy(buf, UPDATES_PREFIX, sizeof(buf));
-  Strncpy(buf + strlen(UPDATES_PREFIX), file, sizeof(buf) - strlen(UPDATES_PREFIX));
-  res = nmap_fetchfile_sub(filename_returned, bufferlen, buf);
-
-  if (!res)
-    res = nmap_fetchfile_sub(filename_returned, bufferlen, file);
+  res = nmap_fetchfile_sub(filename_returned, bufferlen, file);
 
   return res;
 }
@@ -2690,12 +2682,14 @@ static int nmap_fetchfile_sub(char *filename_returned, int bufferlen, const char
     free(dir);
   }
 
+#ifndef WIN32
   if (!foundsomething) {
     res = Snprintf(filename_returned, bufferlen, "%s/%s", NMAPDATADIR, file);
     if (res > 0 && res < bufferlen) {
       foundsomething = file_is_readable(filename_returned);
     }
   }
+#endif
 
   if (foundsomething && (*filename_returned != '.')) {
     res = Snprintf(dot_buffer, sizeof(dot_buffer), "./%s", file);
