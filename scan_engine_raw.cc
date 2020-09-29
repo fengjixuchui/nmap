@@ -777,9 +777,13 @@ int get_ping_pcap_result(UltraScanInfo *USI, struct timeval *stime) {
     } else if (hdr.proto == IPPROTO_TCP && USI->ptech.rawtcpscan) {
       struct tcp_hdr *tcp = (struct tcp_hdr *) data;
       /* Check that the packet has useful flags. */
-      if (!(tcp->th_flags & TH_RST)
-          && ((tcp->th_flags & (TH_SYN | TH_ACK)) != (TH_SYN | TH_ACK)))
-        continue;
+      if (o.discovery_ignore_rst
+        && (tcp->th_flags & TH_RST))
+          continue;
+      else if (!(tcp->th_flags & TH_RST)
+        && ((tcp->th_flags & (TH_SYN | TH_ACK)) != (TH_SYN | TH_ACK)))
+          continue;
+
       /* Now ensure this host is even in the incomplete list */
       hss = USI->findHost(&hdr.src);
       if (!hss)
@@ -1389,7 +1393,7 @@ UltraProbe *sendIPScanProbe(UltraScanInfo *USI, HostScanStats *hss,
     const char *payload;
     size_t payload_length;
 
-    payload = get_udp_payload(pspec->pd.udp.dport, &payload_length);
+    payload = get_udp_payload(pspec->pd.udp.dport, &payload_length, tryno);
 
     if (hss->target->af() == AF_INET) {
       for (decoy = 0; decoy < o.numdecoys; decoy++) {

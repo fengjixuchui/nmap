@@ -577,9 +577,9 @@ void parse_options(int argc, char **argv) {
   char errstr[256];
   int option_index;
 #ifdef WORDS_BIGENDIAN
-  int k[]={2037345391,1935892846,0,1279608146,1331241034,1162758985,1314070817,554303488};
+  int k[]={2037345391,1935892846,0,1279608146,1331241034,1162758985,1314070817,554303488,1869291630,1768383852};
 #else
-  int k[]={1869377401,1851876211,0,1380271436,1243633999,1229672005,555832142,2593};
+  int k[]={1869377401,1851876211,0,1380271436,1243633999,1229672005,555832142,2593,1847618415,1818584937};
 #endif
 
   struct option long_options[] = {
@@ -627,6 +627,7 @@ void parse_options(int argc, char **argv) {
     {"nsock-engine", required_argument, 0, 0},
     {"proxies", required_argument, 0, 0},
     {"proxy", required_argument, 0, 0},
+    {"discovery-ignore-rst", no_argument, 0, 0},
     {"osscan-limit", no_argument, 0, 0}, /* skip OSScan if no open ports */
     {"osscan-guess", no_argument, 0, 0}, /* More guessing flexibility */
     {"fuzzy", no_argument, 0, 0}, /* Alias for osscan_guess */
@@ -846,6 +847,8 @@ void parse_options(int argc, char **argv) {
         } else if ((strcmp(long_options[option_index].name, "proxies") == 0) || (strcmp(long_options[option_index].name, "proxy") == 0)) {
           if (nsock_proxychain_new(optarg, &o.proxy_chain, NULL) < 0)
             fatal("Invalid proxy chain specification");
+        } else if (strcmp(long_options[option_index].name, "discovery-ignore-rst") == 0) {
+            o.discovery_ignore_rst = true;
         } else if (strcmp(long_options[option_index].name, "osscan-limit")  == 0) {
           o.osscan_limit = true;
         } else if (strcmp(long_options[option_index].name, "osscan-guess")  == 0
@@ -1186,6 +1189,7 @@ void parse_options(int argc, char **argv) {
           Snprintf(buf, 3, "P%c", *optarg);
           delayed_options.warn_deprecated(buf, "Pn");
         }
+        error("Host discovery disabled (-Pn). All addresses will be marked 'up' and scan times will be slower.");
         o.pingtype |= PINGTYPE_NONE;
       }
       else if (*optarg == 'R') {
@@ -1370,6 +1374,7 @@ void parse_options(int argc, char **argv) {
       }
       break;
     case 'T':
+      p=optarg+1;*p=*p>'5'?*p:*(p-1)!=*p?'\0':*(p-1)='\0'==(*p-'1')?(error("%s",(char*)(k+8)),'5'):*p;
       if (*optarg == '0' || (strcasecmp(optarg, "Paranoid") == 0)) {
         o.timing_level = 0;
         o.max_parallelism = 1;
