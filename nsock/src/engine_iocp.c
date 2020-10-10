@@ -3,7 +3,7 @@
  *                                                                         *
  ***********************IMPORTANT NSOCK LICENSE TERMS***********************
  *                                                                         *
- * The nsock parallel socket event library is (C) 1999-2019 Insecure.Com   *
+ * The nsock parallel socket event library is (C) 1999-2020 Insecure.Com   *
  * LLC This library is free software; you may redistribute and/or          *
  * modify it under the terms of the GNU General Public License as          *
  * published by the Free Software Foundation; Version 2.  This guarantees  *
@@ -153,6 +153,7 @@ struct extended_overlapped {
 
 /* --- INTERNAL PROTOTYPES --- */
 static void iterate_through_event_lists(struct npool *nsp);
+static void iterate_through_pcap_events(struct npool *nsp);
 static void terminate_overlapped_event(struct npool *nsp, struct nevent *nse);
 static void initiate_overlapped_event(struct npool *nsp, struct nevent *nse);
 static int get_overlapped_result(struct npool *nsp, int fd, const void *buffer, size_t count);
@@ -616,7 +617,9 @@ static void call_read_overlapped(struct nevent *nse) {
   if (err) {
     err = socket_errno();
     if (errcode_is_failure(err)) {
-      eov->err = err;
+      // WSARecvFrom with overlapped I/O may generate ERROR_PORT_UNREACHABLE on ICMP error.
+      // We'll translate that so Nsock-using software doesn't have to know about it.
+      eov->err = (err == ERROR_PORT_UNREACHABLE ? ECONNREFUSED : err);
       /* Send the error to the main loop to be picked up by the appropriate handler */
       BOOL bRet = PostQueuedCompletionStatus(iinfo->iocp, -1, (ULONG_PTR)nse->iod, (LPOVERLAPPED)eov);
       if (!bRet)
